@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Chat Gemini Funcional</title>
+<title>Chat Gemini AI Studio</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -10,14 +10,9 @@
 
 <div class="max-w-xl mx-auto bg-white p-4 rounded shadow">
     
-    <div class="flex gap-2 mb-4">
-        <button onclick="setKey()" class="bg-blue-600 text-white px-4 py-2 rounded">
-            Configurar API
-        </button>
-        <button onclick="clearChat()" class="bg-gray-400 text-white px-4 py-2 rounded">
-            Limpiar
-        </button>
-    </div>
+    <button onclick="setKey()" class="bg-blue-600 text-white px-4 py-2 rounded mb-3">
+        Configurar API
+    </button>
 
     <div id="chat" class="h-80 overflow-y-auto border p-3 mb-3 space-y-2"></div>
 
@@ -27,7 +22,6 @@
             Enviar
         </button>
     </div>
-
 </div>
 
 <script>
@@ -56,10 +50,6 @@ function add(role, text){
     const chat = document.getElementById("chat");
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
-}
-
-function clearChat(){
-    document.getElementById("chat").innerHTML = "";
 }
 
 async function callGemini(text){
@@ -91,14 +81,12 @@ async function callGemini(text){
 
         const data = await res.json();
 
-        // 🔴 error de API
         if(!res.ok){
             console.error(data);
-            return `❌ ${data.error?.message || "Error desconocido"}`;
+            return `❌ ${data.error?.message}`;
         }
 
-        // ✅ respuesta correcta
-        return data.candidates?.[0]?.content?.parts?.[0]?.text || "⚠️ Sin respuesta";
+        return data.candidates?.[0]?.content?.parts?.[0]?.text || "Sin respuesta";
 
     }catch(e){
         console.error(e);
