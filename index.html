@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas Automáticos de Control - Tecnología e Ingeniería II</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .gradient-bg { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); }
+        .block-diagram { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 20px; text-align: center; font-family: monospace; }
+        .ai-message { background: #f1f5f9; border-radius: 12px 12px 12px 0; padding: 12px; margin-bottom: 10px; border: 1px solid #e2e8f0; }
+        .user-message { background: #3b82f6; color: white; border-radius: 12px 12px 0 12px; padding: 12px; margin-bottom: 10px; align-self: flex-end; }
+        .loading-dots:after { content: '.'; animation: dots 1s steps(5, end) infinite; }
+        @keyframes dots { 0%, 20% { color: rgba(0,0,0,0); text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); } 40% { color: #3b82f6; text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); } 60% { color: #3b82f6; text-shadow: .5em 0 0 #3b82f6, 1em 0 0 rgba(0,0,0,0); } 80%, 100% { color: #3b82f6; text-shadow: .5em 0 0 #3b82f6, 1em 0 0 #3b82f6; } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Navegación -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-microchip text-blue-600 text-xl"></i>
+                <span class="font-bold text-slate-800">TecnoIES</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="promptForKey()" id="key-btn" class="p-2 rounded-full hover:bg-slate-100 transition" title="Configurar API Key">
+                    <i class="fas fa-key text-slate-400" id="key-icon"></i>
+                </button>
+                <button onclick="toggleChat()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md hover:bg-blue-700 transition">
+                    ✨ Asistente IA
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chat de IA -->
+    <div id="chat-container" class="fixed bottom-6 right-6 w-80 md:w-96 h-[500px] bg-white shadow-2xl rounded-2xl z-[100] flex flex-col hidden border border-slate-200 overflow-hidden">
+        <div class="p-4 bg-blue-600 text-white flex justify-between items-center">
+            <span class="font-bold"><i class="fas fa-robot mr-2"></i>Tutor de Automatismos</span>
+            <button onclick="toggleChat()"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="chat-box" class="flex-1 overflow-y-auto p-4 flex flex-col space-y-2 text-sm text-slate-700">
+            <div class="ai-message">¡Hola! Soy la IA configurada para el Tema 9 de Automatismos. Recuerda activar tu llave 🔑 arriba para que pueda ayudarte.</div>
+        </div>
+        <div id="loading" class="hidden px-4 py-2 text-xs text-blue-600 font-bold italic loading-dots bg-blue-50">Pensando</div>
+        <div class="p-4 border-t bg-slate-50">
+            <div class="flex gap-2">
+                <input type="text" id="user-input" placeholder="Pregunta sobre el tema..." class="flex-1 border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <button onclick="sendMsg()" class="bg-blue-600 text-white px-3 py-2 rounded-lg"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido -->
+    <header class="gradient-bg text-white py-20 px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Sistemas Automáticos de Control</h1>
+        <p class="text-slate-300 max-w-2xl mx-auto italic">Apuntes interactivos basados en el Tema 9: Automatismos (Tecnología e Ingeniería II)</p>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-12">
+        <section class="grid md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border">
+                <h3 class="text-xl font-bold mb-4 text-blue-600">Lazo Abierto</h3>
+                <p class="text-slate-600 mb-6">La salida no afecta a la acción de control. Ejemplo: Una tostadora que funciona por tiempo sin medir si el pan está quemado.</p>
+                <div class="block-diagram text-xs">Entrada → [Controlador] → [Actuador] → SALIDA</div>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-sm border">
+                <h3 class="text-xl font-bold mb-4 text-green-600">Lazo Cerrado</h3>
+                <p class="text-slate-600 mb-6">Existe realimentación. El sistema mide la salida y la compara con la deseada. Ejemplo: Aire acondicionado.</p>
+                <div class="block-diagram text-xs">Entrada → ⓧ → [Control] → [Proceso] → SALIDA<br>↑_______[ Sensor ]_______|</div>
+            </div>
+        </section>
+
+        <section class="bg-slate-800 text-white p-8 rounded-2xl mb-12">
+            <h3 class="text-2xl font-bold mb-6">Componentes Clave</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="border border-slate-600 p-4 rounded-xl">
+                    <h4 class="font-bold text-blue-400 mb-2">Transductores</h4>
+                    <p class="text-xs text-slate-400">Sensores que convierten magnitudes físicas (luz, temp) en eléctricas.</p>
+                </div>
+                <div class="border border-slate-600 p-4 rounded-xl">
+                    <h4 class="font-bold text-green-400 mb-2">Comparadores</h4>
+                    <p class="text-xs text-slate-400">Dispositivos que calculan el error (Diferencia entre consigna y real).</p>
+                </div>
+                <div class="border border-slate-600 p-4 rounded-xl">
+                    <h4 class="font-bold text-red-400 mb-2">Actuadores</h4>
+                    <p class="text-xs text-slate-400">Elementos que ejecutan la orden (Motores, relés, cilindros).</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let apiKey = localStorage.getItem('tecno_key') || "";
+        updateKeyUI();
+
+        function updateKeyUI() {
+            const icon = document.getElementById('key-icon');
+            if(apiKey) {
+                icon.className = "fas fa-key text-green-500";
+                document.getElementById('key-btn').classList.add('bg-green-50');
+            } else {
+                icon.className = "fas fa-key text-slate-400";
+            }
+        }
+
+        function promptForKey() {
+            const val = prompt("Pega aquí tu API Key de Gemini:", apiKey);
+            if(val !== null) {
+                apiKey = val.trim();
+                localStorage.setItem('tecno_key', apiKey);
+                updateKeyUI();
+                if(apiKey) addMsg('ai', "¡Llave configurada! Ahora puedo usar los apuntes del Tema 9 para responderte.");
+            }
+        }
+
+        function toggleChat() { document.getElementById('chat-container').classList.toggle('hidden'); }
+
+        async function callIA(promptText) {
+            if(!apiKey) { alert("Configura primero la API Key con la llave superior."); return; }
+            document.getElementById('loading').classList.remove('hidden');
+            
+            // Instrucciones basadas en tu PDF subido
+            const systemPrompt = `Eres un tutor de Tecnología e Ingeniería II. Tienes el contenido del 'Tema 9: Automatismos'. 
+            Debes explicar conceptos como Lazo Abierto/Cerrado, Funciones de Transferencia G(s), Transductores (LDR, NTC, etc.), y Control PID (P, I, D). 
+            Responde siempre en español de forma educativa. Si te preguntan algo fuera de tecnología, redirígeles al tema.`;
+
+            try {
+                // CORRECCIÓN URL: Usamos v1beta/models/gemini-1.5-flash
+                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: promptText }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+
+                const data = await resp.json();
+                if(!resp.ok) throw new Error(data.error?.message || "Error desconocido");
+                return data.candidates[0].content.parts[0].text;
+            } catch (e) {
+                return "❌ Error: " + e.message + ". Revisa que tu API Key sea correcta.";
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+
+        async function sendMsg() {
+            const input = document.getElementById('user-input');
+            const val = input.value.trim();
+            if(!val) return;
+            addMsg('user', val);
+            input.value = "";
+            const res = await callIA(val);
+            if(res) addMsg('ai', res);
+        }
+
+        function addMsg(role, text) {
+            const box = document.getElementById('chat-box');
+            const div = document.createElement('div');
+            div.className = role === 'user' ? 'user-message' : 'ai-message';
+            div.innerHTML = text.replace(/\n/g, '<br>');
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        document.getElementById('user-input').addEventListener('keypress', (e) => { if(e.key==='Enter') sendMsg(); });
+    </script>
+</body>
+</html>
