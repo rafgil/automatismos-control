@@ -15,7 +15,6 @@
         .ai-message { background: #f1f5f9; border-radius: 12px 12px 12px 0; padding: 12px; margin-bottom: 10px; border: 1px solid #e2e8f0; line-height: 1.5; }
         .user-message { background: #3b82f6; color: white; border-radius: 12px 12px 0 12px; padding: 12px; margin-bottom: 10px; align-self: flex-end; }
         .ai-message strong { color: #1e293b; font-weight: 700; }
-        .ai-message ul { list-style-type: disc; margin-left: 20px; margin-top: 5px; }
         .loading-dots:after { content: '.'; animation: dots 1s steps(5, end) infinite; }
         @keyframes dots { 0%, 20% { color: rgba(0,0,0,0); text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); } 40% { color: #3b82f6; text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); } 60% { color: #3b82f6; text-shadow: .5em 0 0 #3b82f6, 1em 0 0 rgba(0,0,0,0); } 80%, 100% { color: #3b82f6; text-shadow: .5em 0 0 #3b82f6, 1em 0 0 #3b82f6; } }
     </style>
@@ -40,70 +39,44 @@
         </div>
     </nav>
 
-    <!-- Chat de IA Flotante -->
+    <!-- Chat de IA -->
     <div id="chat-container" class="fixed bottom-6 right-6 w-80 md:w-96 h-[550px] bg-white shadow-2xl rounded-2xl z-[100] flex flex-col hidden border border-slate-200 overflow-hidden">
         <div class="p-4 bg-blue-600 text-white flex justify-between items-center">
             <div class="flex flex-col">
                 <span class="font-bold text-sm"><i class="fas fa-robot mr-2"></i>Tutor de Automatismos</span>
-                <span id="api-status" class="text-[10px] opacity-80">Esperando API Key...</span>
+                <span id="api-status" class="text-[10px] opacity-80">Configura tu llave 🔑</span>
             </div>
             <button onclick="toggleChat()"><i class="fas fa-times"></i></button>
         </div>
         <div id="chat-box" class="flex-1 overflow-y-auto p-4 flex flex-col space-y-2 text-sm text-slate-700">
-            <div class="ai-message">¡Hola! Soy tu tutor para el <strong>Tema 9</strong>.<br><br>Para empezar:<br>1. Pulsa la llave 🔑 superior.<br>2. Pega tu API Key.<br>3. Pregúntame sobre PID, lazos o transductores.</div>
+            <div class="ai-message">¡Hola! Para que pueda ayudarte con el <strong>Tema 9</strong>, necesito una API Key válida de Google AI Studio. Pulsa la llave 🔑 arriba.</div>
         </div>
-        <div id="loading" class="hidden px-4 py-2 text-xs text-blue-600 font-bold italic loading-dots bg-blue-50">Conectando con Google Gemini</div>
+        <div id="loading" class="hidden px-4 py-2 text-xs text-blue-600 font-bold italic loading-dots bg-blue-50">Consultando con el cerebro digital</div>
         <div class="p-4 border-t bg-slate-50">
             <div class="flex gap-2">
-                <input type="text" id="user-input" placeholder="Pregunta sobre el tema..." class="flex-1 border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm">
-                <button onclick="sendMsg()" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition shadow-md">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+                <input type="text" id="user-input" placeholder="Pregunta sobre el tema..." class="flex-1 border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <button onclick="sendMsg()" class="bg-blue-600 text-white px-3 py-2 rounded-lg"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- Contenido Principal -->
+    <!-- Contenido -->
     <header class="gradient-bg text-white py-20 px-4 text-center">
-        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">Sistemas Automáticos de Control</h1>
-        <p class="text-slate-300 max-w-2xl mx-auto italic">Tecnología e Ingeniería II - IES Salamanca</p>
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Sistemas Automáticos de Control</h1>
+        <p class="text-slate-300 max-w-2xl mx-auto italic">Tecnología e Ingeniería II - Contenidos del Tema 9</p>
     </header>
 
     <main class="max-w-5xl mx-auto px-4 py-12">
         <section class="grid md:grid-cols-2 gap-8 mb-12">
-            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 transition hover:shadow-md">
-                <h3 class="text-xl font-bold mb-4 text-blue-600 flex items-center gap-2">
-                    <i class="fas fa-door-open"></i> Lazo Abierto
-                </h3>
-                <p class="text-slate-600 mb-6 text-sm">La señal de salida no se mide ni se realimenta para corregir la acción de control. Útil cuando la relación entrada-salida es conocida y estable.</p>
-                <div class="block-diagram text-[10px]">ENTRADA → [CONTROLADOR] → [ACTUADOR] → SALIDA</div>
+            <div class="bg-white p-8 rounded-2xl border shadow-sm">
+                <h3 class="text-xl font-bold mb-4 text-blue-600">Lazo Abierto</h3>
+                <p class="text-sm text-slate-600 mb-4">El sistema no conoce el estado de la salida. No hay sensores que informen del error.</p>
+                <div class="block-diagram text-[10px]">E → [CONTROL] → [ACTUADOR] → S</div>
             </div>
-            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 transition hover:shadow-md">
-                <h3 class="text-xl font-bold mb-4 text-green-600 flex items-center gap-2">
-                    <i class="fas fa-redo"></i> Lazo Cerrado
-                </h3>
-                <p class="text-slate-600 mb-6 text-sm">Existe realimentación. Se mide la salida y se compara con la entrada (consigna) para minimizar el error de forma continua.</p>
-                <div class="block-diagram text-[10px]">ENTRADA → ⓧ → [CONTROL] → [PROCESO] → SALIDA<br>↑__________[ SENSOR ]__________|</div>
-            </div>
-        </section>
-
-        <section class="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 mb-12">
-            <h3 class="text-2xl font-bold mb-8 flex items-center gap-3">
-                <i class="fas fa-microchip text-slate-400"></i> Bloques del Sistema
-            </h3>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="p-4 rounded-xl bg-blue-50 border border-blue-100">
-                    <h4 class="font-bold text-blue-800 mb-2">Sensores</h4>
-                    <p class="text-xs text-blue-700 leading-relaxed">Transductores como LDR, Termistores (NTC/PTC) o ultrasonidos que captan la realidad física.</p>
-                </div>
-                <div class="p-4 rounded-xl bg-purple-50 border border-purple-100">
-                    <h4 class="font-bold text-purple-800 mb-2">Controladores</h4>
-                    <p class="text-xs text-purple-700 leading-relaxed">Algoritmos (PID) o circuitos que calculan la señal de mando basándose en el error detectado.</p>
-                </div>
-                <div class="p-4 rounded-xl bg-red-50 border border-red-100">
-                    <h4 class="font-bold text-red-800 mb-2">Actuadores</h4>
-                    <p class="text-xs text-red-700 leading-relaxed">Motores, servomotores o relés que transforman la señal eléctrica en acción mecánica o física.</p>
-                </div>
+            <div class="bg-white p-8 rounded-2xl border shadow-sm">
+                <h3 class="text-xl font-bold mb-4 text-green-600">Lazo Cerrado</h3>
+                <p class="text-sm text-slate-600 mb-4">La salida se mide y se compara con la consigna para corregir errores mediante realimentación.</p>
+                <div class="block-diagram text-[10px]">E → ⓧ → [CONTROL] → [PLANTA] → S<br>↑_______[ SENSOR ]_______|</div>
             </div>
         </section>
     </main>
@@ -114,72 +87,62 @@
 
         function updateKeyUI() {
             const icon = document.getElementById('key-icon');
-            const btn = document.getElementById('key-btn');
             const status = document.getElementById('api-status');
-            if(apiKey) {
+            if(apiKey.trim()) {
                 icon.className = "fas fa-key text-green-500";
-                btn.classList.add('bg-green-50');
-                status.innerText = "API Key conectada ✅";
-                status.classList.replace('opacity-80', 'text-green-200');
+                status.innerText = "API Key cargada ✅";
             } else {
                 icon.className = "fas fa-key text-slate-400";
-                btn.classList.remove('bg-green-50');
-                status.innerText = "Sin API Key 🔑";
+                status.innerText = "Falta API Key 🔑";
             }
         }
 
         function promptForKey() {
-            const val = prompt("Pega aquí tu API Key de Google Gemini:", apiKey);
+            const val = prompt("Copia y pega aquí tu clave de Google AI Studio:", apiKey);
             if(val !== null) {
-                apiKey = val.trim();
+                apiKey = val.trim(); // Limpiamos espacios accidentales
                 localStorage.setItem('tecno_key', apiKey);
                 updateKeyUI();
-                if(apiKey) addMsg('ai', "<strong>✅ Sistema Listo:</strong> Ya puedes consultarme cualquier duda del Tema 9.");
+                if(apiKey) addMsg('ai', "<strong>¡Clave actualizada!</strong> Prueba a hacerme una pregunta ahora.");
             }
         }
 
         function toggleChat() { document.getElementById('chat-container').classList.toggle('hidden'); }
 
         async function callIA(promptText) {
-            if(!apiKey) { 
-                alert("Pulsa la llave 🔑 para introducir tu API Key."); 
-                return; 
+            if(!apiKey.trim()) {
+                addMsg('ai', "⚠️ Por favor, introduce primero tu API Key usando el icono de la llave.");
+                return null;
             }
             
             document.getElementById('loading').classList.remove('hidden');
             
-            const systemPrompt = `Eres un tutor experto de Tecnología e Ingeniería II. 
-            Utiliza exclusivamente el contenido del Tema 9: Automatismos. 
-            Temas clave: Lazos de control, Transductores (p.ej. LDR, NTC, finales de carrera), Comparadores, Error, 
-            Funciones de transferencia G(s), Diagramas de bloques, y Controladores PID.
-            Explica de forma clara para alumnos de 2º de Bachillerato. 
-            Si la respuesta tiene listas o tablas, usa formato Markdown.`;
+            const systemPrompt = `Eres un tutor de Tecnología de 2º de Bachillerato experto en Automatismos. 
+            Responde de forma clara y técnica. Usa el contenido del Tema 9: Lazos, bloques, transductores y PID.`;
 
             try {
-                // He añadido parámetros de seguridad y cabeceras más limpias para evitar errores de CORS
+                // Usamos fetch con el modelo gemini-1.5-flash
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST',
-                    mode: 'cors', // Forzamos modo CORS
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: promptText }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] },
-                        generationConfig: { temperature: 0.7, topP: 0.8, topK: 40 }
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
                     })
                 });
 
                 const data = await response.json();
                 
                 if (!response.ok) {
-                    let errorMsg = data.error?.message || "Error desconocido";
-                    if(response.status === 403) errorMsg = "La API Key no es válida o no tiene permisos.";
-                    throw new Error(errorMsg);
+                    if(data.error?.message.includes("API key not valid")) {
+                        throw new Error("La clave introducida no es válida. Asegúrate de copiarla bien desde Google AI Studio.");
+                    }
+                    throw new Error(data.error?.message || "Error en la conexión.");
                 }
 
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "No he recibido respuesta del servidor.";
+                return data.candidates[0].content.parts[0].text;
             } catch (error) {
-                console.error("Detalle del error:", error);
-                return `❌ **Error de conexión:** ${error.message}. <br><br> _Sugerencia: Revisa que la clave sea correcta en Google AI Studio._`;
+                return `❌ **Error:** ${error.message}`;
             } finally {
                 document.getElementById('loading').classList.add('hidden');
             }
@@ -189,33 +152,22 @@
             const input = document.getElementById('user-input');
             const val = input.value.trim();
             if(!val) return;
-
             addMsg('user', val);
             input.value = "";
-
-            const response = await callIA(val);
-            if(response) addMsg('ai', response);
+            const res = await callIA(val);
+            if(res) addMsg('ai', res);
         }
 
         function addMsg(role, text) {
             const box = document.getElementById('chat-box');
             const div = document.createElement('div');
             div.className = role === 'user' ? 'user-message' : 'ai-message';
-            
-            // Usamos Marked para renderizar Markdown si es la IA
-            if(role === 'ai') {
-                div.innerHTML = marked.parse(text);
-            } else {
-                div.innerText = text;
-            }
-            
+            div.innerHTML = role === 'ai' ? marked.parse(text) : text;
             box.appendChild(div);
             box.scrollTop = box.scrollHeight;
         }
 
-        document.getElementById('user-input').addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') sendMsg();
-        });
+        document.getElementById('user-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMsg(); });
     </script>
 </body>
 </html>
