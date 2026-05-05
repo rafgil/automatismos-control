@@ -41,26 +41,29 @@
         <div class="p-5 bg-slate-900 text-white flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <i class="fas fa-robot text-blue-400"></i>
-                <span class="font-bold text-sm">Tutor IA - Tema 9</span>
+                <span class="font-bold text-sm">Tutor IA - Modo Test</span>
             </div>
             <button onclick="toggleChat()"><i class="fas fa-times"></i></button>
         </div>
 
-        <div id="chat-box" class="flex-1 overflow-y-auto p-5 flex flex-col bg-slate-50 space-y-2 text-sm">
+        <div id="chat-box" class="flex-1 overflow-y-auto p-5 flex flex-col bg-slate-50 space-y-2 text-sm text-slate-700">
             <div class="ai-message">
-                ¡Hola Rafa! He reforzado la conexión. <br><br>
-                He verificado tu captura: la clave es correcta. Si esta versión falla, es probable que la red del instituto esté bloqueando las peticiones salientes a Google API.
+                Hola Rafa. Estás en casa, así que ahora eliminamos la variable del "Firewall del centro".<br><br>
+                <strong>Pasos:</strong><br>
+                1. Configura la clave.<br>
+                2. Escribe "test" en el chat.<br><br>
+                Si dice "OK", el sistema funciona. Si no, lee el error técnico que aparecerá.
             </div>
         </div>
 
         <div id="loading" class="hidden px-6 py-2 text-xs text-blue-600 font-bold bg-white border-t">
-            Conectando con el cerebro de la IA<span class="loading-dots"></span>
+            Consultando a Google Cloud<span class="loading-dots"></span>
         </div>
 
         <div class="p-4 bg-white border-t">
             <div class="flex gap-2 bg-slate-100 p-1.5 rounded-2xl">
-                <input type="text" id="user-input" placeholder="Pregunta algo sobre el Tema 9..." class="flex-1 bg-transparent px-3 py-2 text-sm outline-none">
-                <button onclick="sendMsg()" class="bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center hover:bg-blue-700">
+                <input type="text" id="user-input" placeholder="Escribe 'test' o una duda..." class="flex-1 bg-transparent px-3 py-2 text-sm outline-none">
+                <button onclick="sendMsg()" class="bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center hover:bg-blue-700 transition">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
@@ -68,45 +71,53 @@
     </div>
 
     <header class="gradient-bg text-white py-16 px-4 text-center">
-        <h1 class="text-4xl font-black mb-2 tracking-tighter">Automatismos y Control</h1>
-        <p class="text-blue-200 font-light italic">Material interactivo - Tecnología e Ingeniería II</p>
+        <h1 class="text-4xl font-black mb-2 tracking-tighter">Depuración de Conexión</h1>
+        <p class="text-blue-200 font-light italic">Prueba de Tutoría desde Red Doméstica</p>
     </header>
 
     <main class="max-w-4xl mx-auto px-4 py-10">
         <div class="bg-white p-8 rounded-3xl border shadow-sm">
-            <h2 class="text-xl font-bold mb-4">Verificación de la Clave</h2>
-            <div class="space-y-4 text-slate-600 text-sm">
-                <p>1. Pulsa en <strong>Configurar Clave</strong> arriba.</p>
-                <p>2. Pega la clave que has generado en Google AI Studio.</p>
-                <p>3. El sistema intentará conectar usando el modelo <strong>Gemini 1.5 Flash</strong>.</p>
+            <h2 class="text-xl font-bold mb-4">Consola de Diagnóstico</h2>
+            <div class="p-4 bg-slate-900 rounded-xl font-mono text-[10px] text-green-400 overflow-x-auto" id="console-log">
+                > Sistema listo para test...
             </div>
-            <div id="error-display" class="mt-6 hidden p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-mono whitespace-pre-wrap">
+            <div class="mt-4 flex gap-2">
+                <button onclick="clearConsole()" class="text-xs bg-slate-200 px-3 py-1 rounded">Limpiar consola</button>
             </div>
         </div>
     </main>
 
     <script>
-        let apiKey = localStorage.getItem('tecno_key_v4') || "";
+        let apiKey = localStorage.getItem('tecno_key_home') || "";
         updateKeyUI();
+
+        function log(msg, color = "text-green-400") {
+            const c = document.getElementById('console-log');
+            c.innerHTML += `<div class="${color}">> ${msg}</div>`;
+            c.scrollTop = c.scrollHeight;
+        }
+
+        function clearConsole() { document.getElementById('console-log').innerHTML = "> Consola limpia..."; }
 
         function updateKeyUI() {
             const icon = document.getElementById('key-icon');
             const label = document.getElementById('key-label');
             if(apiKey.length > 10) {
                 icon.className = "fas fa-key text-green-600";
-                label.innerText = "Clave configurada";
+                label.innerText = "Clave Configurada";
             } else {
                 icon.className = "fas fa-key text-slate-400";
-                label.innerText = "Falta clave";
+                label.innerText = "Configurar Clave";
             }
         }
 
         function promptForKey() {
-            const val = prompt("Introduce tu API Key de Gemini:", apiKey);
+            const val = prompt("Pega tu API Key de Google AI Studio:", apiKey);
             if(val !== null) {
                 apiKey = val.trim().replace(/\s/g, '');
-                localStorage.setItem('tecno_key_v4', apiKey);
+                localStorage.setItem('tecno_key_home', apiKey);
                 updateKeyUI();
+                log("Nueva clave guardada y limpia de espacios.");
             }
         }
 
@@ -114,57 +125,59 @@
 
         async function callIA(promptText) {
             if(!apiKey) {
-                addMsg('ai', "❌ **Error:** No hay API Key configurada.");
+                addMsg('ai', "❌ No hay clave. Configúrala arriba.");
                 return null;
             }
             
             document.getElementById('loading').classList.remove('hidden');
-            const errorDisplay = document.getElementById('error-display');
-            errorDisplay.classList.add('hidden');
-            
-            // Lista de URLs para intentar en orden de estabilidad
-            const endpoints = [
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-                `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`
-            ];
+            log(`Iniciando petición para: "${promptText}"...`);
 
-            for (let url of endpoints) {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: promptText }] }]
-                        })
-                    });
+            try {
+                // Endpoint estándar v1beta
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: promptText }] }]
+                    })
+                });
 
-                    const data = await response.json();
-                    
-                    if (response.ok) {
-                        document.getElementById('loading').classList.add('hidden');
-                        return data.candidates[0].content.parts[0].text;
-                    }
-                    
-                    console.warn(`Intento fallido con ${url}`, data);
-                } catch (err) {
-                    console.error("Error de red:", err);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log("Conexión exitosa con Google.");
+                    document.getElementById('loading').classList.add('hidden');
+                    return data.candidates[0].content.parts[0].text;
+                } else {
+                    const errorMsg = data.error?.message || "Error desconocido";
+                    log(`ERROR ${response.status}: ${errorMsg}`, "text-red-400");
+                    document.getElementById('loading').classList.add('hidden');
+                    return `❌ **Error ${response.status}:** ${errorMsg}`;
                 }
+            } catch (err) {
+                log(`ERROR DE RED: ${err.message}`, "text-red-500");
+                document.getElementById('loading').classList.add('hidden');
+                return `❌ **Error de Red:** No se pudo contactar con Google. ¿Tienes internet?`;
             }
-
-            document.getElementById('loading').classList.add('hidden');
-            errorDisplay.innerText = "Error crítico de conexión. Posibles causas:\n1. La red del centro bloquea la API de Google.\n2. La clave aún no está activa (espera 5 min).\n3. La región 'España' requiere una VPN si el firewall es muy estricto.";
-            errorDisplay.classList.remove('hidden');
-            return "❌ **Error de Conexión:** No he podido contactar con el servidor. Revisa el panel de control abajo.";
         }
 
         async function sendMsg() {
             const input = document.getElementById('user-input');
             const val = input.value.trim();
             if(!val) return;
+            
             addMsg('user', val);
             input.value = "";
-            const res = await callIA(val);
-            if(res) addMsg('ai', res);
+
+            if(val.toLowerCase() === 'test') {
+                const res = await callIA("Di simplemente 'OK' si recibes esto.");
+                addMsg('ai', res);
+            } else {
+                const res = await callIA(val);
+                if(res) addMsg('ai', res);
+            }
         }
 
         function addMsg(role, text) {
